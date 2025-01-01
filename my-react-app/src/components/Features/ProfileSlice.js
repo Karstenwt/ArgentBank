@@ -1,5 +1,30 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+export const fetchUserProfile = createAsyncThunk(
+  "profile/fetchUserProfile",
+  async (token, thunkAPI) => {
+    try {
+      const response = await fetch(
+        "http://localhost:3001/api/v1/user/profile",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to fetch user profile");
+      }
+      return data.body; // Contient les données utilisateur
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
 const initialState = {
   data: null,
   isLoading: false,

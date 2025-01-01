@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { Navigate } from "react-router-dom";
 import { loginSuccess, loginFailure } from "../../features/authSlice";
 import "./SignIn.css";
 
@@ -7,6 +8,7 @@ const SignIn = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated); 
   const dispatch = useDispatch();
 
   const handleSubmit = async (e) => {
@@ -29,6 +31,11 @@ const SignIn = () => {
       setErrorMessage(error.message);
     }
   };
+
+  // Redirection 
+  if (isAuthenticated) {
+    return <Navigate to="/user" />;
+  }
 
   return (
     <div className="sign-in-page">
