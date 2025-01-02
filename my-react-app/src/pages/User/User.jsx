@@ -78,7 +78,7 @@ const User = () => {
               <h1>
                 Welcome back
                 <br />
-                Tony Jarvis!
+                {username || "User"} !
               </h1>
               <button
                 className="edit-button"
