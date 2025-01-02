@@ -1,7 +1,21 @@
-import React from "react";
+import React, { useState } from "react";
 import "./User.css";
 
 const User = () => {
+  const [isEditing, setIsEditing] = useState(false);
+  const [username, setUsername] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+
+  const handleSave = () => {
+    console.log("Username saved:", { username, firstName, lastName });
+    setIsEditing(false);
+  };
+
+  const handleCancel = () => {
+    setIsEditing(false);
+  };
+
   return (
     <div className="user-page">
       <nav className="main-nav">
@@ -27,16 +41,64 @@ const User = () => {
 
       <main className="main bg-dark">
         <div className="header">
-          <h1>
-            Welcome back
-            <br />
-            Tony Jarvis!
-          </h1>
-          <button className="edit-button">Edit Name</button>
+          {!isEditing ? (
+            <>
+              <h1>
+                Welcome back
+                <br />
+                Tony Jarvis!
+              </h1>
+              <button
+                className="edit-button"
+                onClick={() => setIsEditing(true)}
+              >
+                Edit Name
+              </button>
+            </>
+          ) : (
+            <div className="edit-form">
+              <h1>Edit User Info</h1>
+              <div className="input-wrapper">
+                <label htmlFor="username">Username:</label>
+                <input
+                  type="text"
+                  id="username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                />
+              </div>
+              <div className="input-wrapper">
+                <label htmlFor="firstName">First Name:</label>
+                <input
+                  type="text"
+                  id="firstName"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                />
+              </div>
+              <div className="input-wrapper">
+                <label htmlFor="lastName">Last Name:</label>
+                <input
+                  type="text"
+                  id="lastName"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                />
+              </div>
+              <div className="button-group">
+                <button className="save-button" onClick={handleSave}>
+                  Save
+                </button>
+                <button className="cancel-button" onClick={handleCancel}>
+                  Cancel
+                </button>
+              </div>
+            </div>
+          )}
         </div>
 
+        {/* Les informations existantes restent intactes */}
         <h2 className="sr-only">Accounts</h2>
-
         <section className="account">
           <div className="account-content-wrapper">
             <h3 className="account-title">Argent Bank Checking (x8349)</h3>
