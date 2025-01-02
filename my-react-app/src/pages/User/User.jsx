@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useSelector } from "react-redux";
 import "./User.css";
 
 const User = () => {
@@ -6,10 +7,41 @@ const User = () => {
   const [username, setUsername] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
-  const handleSave = () => {
-    console.log("Username saved:", { username, firstName, lastName });
-    setIsEditing(false);
+  const token = useSelector((state) => state.auth.token);
+
+  const handleSave = async () => {
+    setErrorMessage("");
+    setSuccessMessage("");
+    try {
+      const response = await fetch("http://localhost:3001/api/v1/user/profile", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          userName: username,
+          firstName,
+          lastName,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Unknown error occurred");
+      }
+
+      const data = await response.json();
+      console.log("Profil mis à jour avec succès :", data);
+      setSuccessMessage("Profile updated successfully!");
+      setIsEditing(false);
+    } catch (error) {
+      console.error("Erreur lors de la mise à jour du profil :", error.message);
+      setErrorMessage(error.message);
+    }
   };
 
   const handleCancel = () => {
@@ -30,7 +62,7 @@ const User = () => {
         <div>
           <a className="main-nav-item" href="/user">
             <i className="fa fa-user-circle"></i>
-            Tony
+            {username || "User"}
           </a>
           <a className="main-nav-item" href="/">
             <i className="fa fa-sign-out"></i>
@@ -93,11 +125,16 @@ const User = () => {
                   Cancel
                 </button>
               </div>
+              {errorMessage && (
+                <p className="error-message">{errorMessage}</p>
+              )}
+              {successMessage && (
+                <p className="success-message">{successMessage}</p>
+              )}
             </div>
           )}
         </div>
 
-        {/* Les informations existantes restent intactes */}
         <h2 className="sr-only">Accounts</h2>
         <section className="account">
           <div className="account-content-wrapper">
