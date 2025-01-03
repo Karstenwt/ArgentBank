@@ -1,20 +1,19 @@
 import React, { useState } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { setUser } from "../../features/authSlice";
 import "./User.css";
 
 const User = () => {
+  const user = useSelector((state) => state.auth.user);
+  const token = useSelector((state) => state.auth.token);
+  const dispatch = useDispatch();
+
   const [isEditing, setIsEditing] = useState(false);
-  const [username, setUsername] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
+  const [username, setUsername] = useState(user?.userName || "");
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
 
-  const token = useSelector((state) => state.auth.token);
-
   const handleSave = async () => {
-    setErrorMessage("");
-    setSuccessMessage("");
     try {
       const response = await fetch("http://localhost:3001/api/v1/user/profile", {
         method: "PUT",
@@ -22,11 +21,7 @@ const User = () => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          userName: username,
-          firstName,
-          lastName,
-        }),
+        body: JSON.stringify({ userName: username }),
       });
 
       if (!response.ok) {
@@ -35,17 +30,19 @@ const User = () => {
       }
 
       const data = await response.json();
-      console.log("Profil mis à jour avec succès :", data);
-      setSuccessMessage("Profile updated successfully!");
+
+      // Mettre à jour Redux et localStorage
+      dispatch(setUser({ userName: data.body.userName }));
+      setSuccessMessage("Username updated successfully!");
       setIsEditing(false);
     } catch (error) {
-      console.error("Erreur lors de la mise à jour du profil :", error.message);
       setErrorMessage(error.message);
     }
   };
 
   const handleCancel = () => {
     setIsEditing(false);
+    setUsername(user?.userName || "");
   };
 
   return (
@@ -62,7 +59,7 @@ const User = () => {
         <div>
           <a className="main-nav-item" href="/user">
             <i className="fa fa-user-circle"></i>
-            {username || "User"}
+            {user?.userName || "User"}
           </a>
           <a className="main-nav-item" href="/">
             <i className="fa fa-sign-out"></i>
@@ -73,23 +70,17 @@ const User = () => {
 
       <main className="main bg-dark">
         <div className="header">
+          <h1>
+            Welcome back
+            <br />
+            {user?.userName || "User"}!
+          </h1>
           {!isEditing ? (
-            <>
-              <h1>
-                Welcome back
-                <br />
-                {username || "User"} !
-              </h1>
-              <button
-                className="edit-button"
-                onClick={() => setIsEditing(true)}
-              >
-                Edit Name
-              </button>
-            </>
+            <button className="edit-button" onClick={() => setIsEditing(true)}>
+              Edit Username
+            </button>
           ) : (
             <div className="edit-form">
-              <h1>Edit User Info</h1>
               <div className="input-wrapper">
                 <label htmlFor="username">Username:</label>
                 <input
@@ -100,21 +91,19 @@ const User = () => {
                 />
               </div>
               <div className="input-wrapper">
-                <label htmlFor="firstName">First Name:</label>
+                <label>First Name:</label>
                 <input
                   type="text"
-                  id="firstName"
-                  value={firstName}
-                  onChange={(e) => setFirstName(e.target.value)}
+                  value={user?.firstName || ""}
+                  readOnly
                 />
               </div>
               <div className="input-wrapper">
-                <label htmlFor="lastName">Last Name:</label>
+                <label>Last Name:</label>
                 <input
                   type="text"
-                  id="lastName"
-                  value={lastName}
-                  onChange={(e) => setLastName(e.target.value)}
+                  value={user?.lastName || ""}
+                  readOnly
                 />
               </div>
               <div className="button-group">

@@ -1,28 +1,47 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Navigate } from "react-router-dom";
-import { loginSuccess, loginFailure } from "../../features/authSlice";
+import { loginSuccess, loginFailure, setUser } from "../../features/authSlice";
 import "./SignIn.css";
 
 const SignIn = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated); 
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   const dispatch = useDispatch();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      // Étape 1 : Se connecter et obtenir un token
       const response = await fetch("http://localhost:3001/api/v1/user/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
       const data = await response.json();
+
       if (response.ok) {
-        dispatch(loginSuccess(data.body.token));
-        setErrorMessage("");
+        const token = data.body.token;
+        dispatch(loginSuccess(token));
+
+        // Étape 2 : Utiliser le token pour récupérer les infos utilisateur
+        const profileResponse = await fetch("http://localhost:3001/api/v1/user/profile", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const profileData = await profileResponse.json();
+
+        if (profileResponse.ok) {
+          dispatch(setUser(profileData.body)); // Stocker les infos utilisateur
+          setErrorMessage("");
+        } else {
+          throw new Error(profileData.message || "Failed to fetch user profile");
+        }
       } else {
         throw new Error(data.message || "Invalid credentials");
       }
@@ -32,7 +51,6 @@ const SignIn = () => {
     }
   };
 
-  // Redirection 
   if (isAuthenticated) {
     return <Navigate to="/user" />;
   }
@@ -82,9 +100,7 @@ const SignIn = () => {
               <input type="checkbox" id="remember-me" />
               <label htmlFor="remember-me">Remember me</label>
             </div>
-            {errorMessage && (
-              <p className="error-message">{errorMessage}</p>
-            )}
+            {errorMessage && <p className="error-message">{errorMessage}</p>}
             <button type="submit" className="sign-in-button">
               Sign In
             </button>

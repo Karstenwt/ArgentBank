@@ -4,6 +4,7 @@ const initialState = {
   token: null,
   isAuthenticated: false,
   error: null,
+  user: null,
 };
 
 const authSlice = createSlice({
@@ -22,9 +23,14 @@ const authSlice = createSlice({
       state.token = null;
       state.isAuthenticated = false;
       state.error = null;
+      state.user = null;
+    },
+    setUser: (state, action) => {
+      state.user = action.payload; // Ajouter les infos
     },
   },
 });
 
-export const { loginSuccess, loginFailure, logout } = authSlice.actions;
+export const { loginSuccess, loginFailure, logout, setUser } =
+  authSlice.actions;
 export default authSlice.reducer;
