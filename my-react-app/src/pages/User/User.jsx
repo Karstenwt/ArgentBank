@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { setUser } from "../../features/authSlice";
+import AccountItem from "./AccountItem"; 
 import "./User.css";
 
 const User = () => {
@@ -19,7 +20,7 @@ const User = () => {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, //3
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ userName: username }),
       });
@@ -30,8 +31,6 @@ const User = () => {
       }
 
       const data = await response.json();
-
-      // Mettre à jour Redux et localStorage
       dispatch(setUser({ userName: data.body.userName }));
       setSuccessMessage("Username updated successfully!");
       setIsEditing(false);
@@ -92,19 +91,11 @@ const User = () => {
               </div>
               <div className="input-wrapper">
                 <label>First Name:</label>
-                <input
-                  type="text"
-                  value={user?.firstName || ""}
-                  readOnly
-                />
+                <input type="text" value={user?.firstName || ""} readOnly />
               </div>
               <div className="input-wrapper">
                 <label>Last Name:</label>
-                <input
-                  type="text"
-                  value={user?.lastName || ""}
-                  readOnly
-                />
+                <input type="text" value={user?.lastName || ""} readOnly />
               </div>
               <div className="button-group">
                 <button className="save-button" onClick={handleSave}>
@@ -125,38 +116,22 @@ const User = () => {
         </div>
 
         <h2 className="sr-only">Accounts</h2>
-        <section className="account">
-          <div className="account-content-wrapper">
-            <h3 className="account-title">Argent Bank Checking (x8349)</h3>
-            <p className="account-amount">$2,082.79</p>
-            <p className="account-amount-description">Available Balance</p>
-          </div>
-          <div className="account-content-wrapper cta">
-            <button className="transaction-button">View transactions</button>
-          </div>
-        </section>
-
-        <section className="account">
-          <div className="account-content-wrapper">
-            <h3 className="account-title">Argent Bank Savings (x6712)</h3>
-            <p className="account-amount">$10,928.42</p>
-            <p className="account-amount-description">Available Balance</p>
-          </div>
-          <div className="account-content-wrapper cta">
-            <button className="transaction-button">View transactions</button>
-          </div>
-        </section>
-
-        <section className="account">
-          <div className="account-content-wrapper">
-            <h3 className="account-title">Argent Bank Credit Card (x8349)</h3>
-            <p className="account-amount">$184.30</p>
-            <p className="account-amount-description">Current Balance</p>
-          </div>
-          <div className="account-content-wrapper cta">
-            <button className="transaction-button">View transactions</button>
-          </div>
-        </section>
+        
+        <AccountItem
+          title="Argent Bank Checking (x8349)"
+          amount="$2,082.79"
+          description="Available Balance"
+        />
+        <AccountItem
+          title="Argent Bank Savings (x6712)"
+          amount="$10,928.42"
+          description="Available Balance"
+        />
+        <AccountItem
+          title="Argent Bank Credit Card (x8349)"
+          amount="$184.30"
+          description="Current Balance"
+        />
       </main>
 
       <footer className="footer">
