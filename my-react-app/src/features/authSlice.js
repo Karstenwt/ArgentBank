@@ -12,6 +12,7 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     loginSuccess: (state, action) => {
+      //2
       state.token = action.payload;
       state.isAuthenticated = true;
       state.error = null;
@@ -26,7 +27,7 @@ const authSlice = createSlice({
       state.user = null;
     },
     setUser: (state, action) => {
-      state.user = action.payload; // Ajouter les infos
+      state.user = action.payload;
     },
   },
 });

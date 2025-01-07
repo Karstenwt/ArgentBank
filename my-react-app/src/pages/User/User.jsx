@@ -19,7 +19,7 @@ const User = () => {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${token}`, //3
         },
         body: JSON.stringify({ userName: username }),
       });

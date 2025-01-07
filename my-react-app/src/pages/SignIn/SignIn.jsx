@@ -24,7 +24,7 @@ const SignIn = () => {
 
       if (response.ok) {
         const token = data.body.token;
-        dispatch(loginSuccess(token));
+        dispatch(loginSuccess(token));//1
 
         // Étape 2 : Utiliser le token pour récupérer les infos utilisateur
         const profileResponse = await fetch("http://localhost:3001/api/v1/user/profile", {
