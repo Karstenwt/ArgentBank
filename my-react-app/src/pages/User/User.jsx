@@ -91,11 +91,11 @@ const User = () => {
               </div>
               <div className="input-wrapper">
                 <label>First Name:</label>
-                <input type="text" value={user?.firstName || ""} readOnly />
+                <input type="text" value={user?.firstName || ""} disabled />
               </div>
               <div className="input-wrapper">
                 <label>Last Name:</label>
-                <input type="text" value={user?.lastName || ""} readOnly />
+                <input type="text" value={user?.lastName || ""} disabled />
               </div>
               <div className="button-group">
                 <button className="save-button" onClick={handleSave}>
