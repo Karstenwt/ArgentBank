@@ -5,16 +5,16 @@ import { loginSuccess, loginFailure, setUser } from "../../features/authSlice";
 import "./SignIn.css";
 
 const SignIn = () => {
-  const [email, setEmail] = useState(""); // 1. Initialiser l'email saisi par l'utilisateur.
-  const [password, setPassword] = useState(""); // 2. Initialiser le mot de passe saisi par l'utilisateur.
-  const [errorMessage, setErrorMessage] = useState(""); // 3. Stocker les éventuelles erreurs de connexion.
-  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated); // 4. Vérifier si l'utilisateur est déjà authentifié.
+  const [email, setEmail] = useState(""); 
+  const [password, setPassword] = useState(""); 
+  const [errorMessage, setErrorMessage] = useState(""); 
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated); 
   const dispatch = useDispatch();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // 5. Envoyer une requête API pour obtenir un token en fonction des identifiants fournis.
+      
       const response = await fetch("http://localhost:3001/api/v1/user/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -23,36 +23,36 @@ const SignIn = () => {
       const data = await response.json();
 
       if (response.ok) {
-        const token = data.body.token; // 6. Récupérer le token depuis la réponse de l'API.
-        dispatch(loginSuccess(token)); // 7. Enregistrer le token dans Redux.
+        const token = data.body.token; 
+        dispatch(loginSuccess(token)); 
 
-        // 8. Utiliser le token pour récupérer les informations utilisateur.
+        
         const profileResponse = await fetch("http://localhost:3001/api/v1/user/profile", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`, // 9. Ajouter le token dans les headers pour autoriser l'accès.
+            Authorization: `Bearer ${token}`, 
           },
         });
         const profileData = await profileResponse.json();
 
         if (profileResponse.ok) {
-          dispatch(setUser(profileData.body)); // 10. Enregistrer les informations utilisateur dans Redux.
+          dispatch(setUser(profileData.body)); 
           setErrorMessage("");
         } else {
           throw new Error(profileData.message || "Failed to fetch user profile");
         }
       } else {
-        throw new Error(data.message || "Invalid credentials"); // 11. Gérer les erreurs si les identifiants sont invalides.
+        throw new Error(data.message || "Invalid credentials"); 
       }
     } catch (error) {
-      dispatch(loginFailure(error.message)); // 12. Enregistrer l'erreur dans Redux si la connexion échoue.
+      dispatch(loginFailure(error.message)); 
       setErrorMessage(error.message);
     }
   };
 
   if (isAuthenticated) {
-    return <Navigate to="/user" />; // 13. Rediriger vers la page utilisateur si la connexion est réussie.
+    return <Navigate to="/user" />; 
   }
 
   return (
@@ -116,4 +116,4 @@ const SignIn = () => {
 };
 
 export default SignIn;
-// Suite logique dans le fichier authSlice.js.
+

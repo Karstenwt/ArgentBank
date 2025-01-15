@@ -25,4 +25,4 @@ const AppRouter = () => {
 };
 
 export default AppRouter;
-// Suite logique dans le fichier PrivateRoute.js.
+
