@@ -11,9 +11,9 @@ const Navbar = () => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    dispatch(logout()); // Déconnexion 
+    dispatch(logout()); 
     setTimeout(() => {
-      navigate("/"); // Redirection après deconnexion
+      navigate("/"); 
     }, 0);
   };
 
